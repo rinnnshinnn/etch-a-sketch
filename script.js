@@ -1,35 +1,52 @@
-const container = document.querySelector("#container");
-const changeColorButton = document.querySelector("#penColor");
+const gridContainer = document.querySelector("#container");
+const penColorButton = document.querySelector("#penColor");
 const toggleColorModeButton = document.querySelector("#toggleColorMode");
 const gridSizeButton = document.querySelector("#gridSize");
 const eraserButton = document.querySelector("#eraser");
+const darkenModeButton = document.querySelector("#darkenMode");
 
-let currentColor = 'red'; // Default color
-let isRandomColorMode = true; // Start in random color mode
-let isDrawing = false; // Track if drawing is enabled
-let isErasing = false;
+let penColor = 'black'; 
+let isRandomColorMode = false; 
+let isDrawingEnabled = false; 
+let isEraserEnabled = false;
+let isDarkenModeEnabled = false; 
 
-// Function to create grid
 function createGrid(size) {
-    container.innerHTML = "<div></div>".repeat(size * size);
-    const squares = document.querySelectorAll("#container div");
-    squares.forEach(square => {
-        square.addEventListener("mouseover", (event) => {
-            if (isDrawing) {
-                if (isErasing) {
-                    event.target.style.backgroundColor = "#fdf5e6";
+    gridContainer.innerHTML = ""; // Clear any existing grid
+    for (let i = 0; i < size * size; i++) {
+        const gridCell = document.createElement("div");
+        gridCell.style.width = `calc(100% / ${size})`;
+        gridCell.style.height = `calc(100% / ${size})`;
+
+        const overlay = document.createElement("div"); // Create overlay for darkening effect
+        overlay.style.backgroundColor = "#000";
+        overlay.style.opacity = 0;
+        overlay.style.width = "100%";
+        overlay.style.height = "100%";
+        overlay.style.pointerEvents = "none"; // Make overlay non-interactive
+        gridCell.appendChild(overlay);
+
+        gridCell.addEventListener("mouseover", (event) => {
+            if (isDrawingEnabled) {
+                const overlay = event.target.firstChild;
+                if (isEraserEnabled) {
+                    overlay.style.opacity = 0; // Clear darkening effect
+                    event.target.style.backgroundColor = "#fdf5e6"; // Reset background color
+                } else if (isDarkenModeEnabled) {
+                    let currentOpacity = parseFloat(overlay.style.opacity);
+                    if (currentOpacity < 1) {
+                        overlay.style.opacity = currentOpacity + 0.1; // Increment darkening effect
+                    }
                 } else {
-                    event.target.style.backgroundColor = isRandomColorMode ? getRandomColor() : currentColor;
+                    gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
                 }
             }
         });
-        square.style.width = `calc(100% / ${size})`;
-        square.style.height = `calc(100% / ${size})`;
-        square.classList.add("border-wrapper");
-    });
+
+        gridContainer.appendChild(gridCell);
+    }
 }
 
-// Function to generate a random RGB color
 function getRandomColor() {
     const r = Math.floor(Math.random() * 256);
     const g = Math.floor(Math.random() * 256);
@@ -37,25 +54,23 @@ function getRandomColor() {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-// Change the pen color to a new random color
-changeColorButton.addEventListener("click", () => {
-    currentColor = getRandomColor();
+// Change pen color when penColorButton is clicked
+penColorButton.addEventListener("click", () => {
+    penColor = getRandomColor();
 });
 
-// Toggle between random color mode and single color mode
+// Toggle between random and single color modes
 toggleColorModeButton.addEventListener("click", () => {
     isRandomColorMode = !isRandomColorMode;
     toggleColorModeButton.textContent = isRandomColorMode ? "Switch to Single Color Mode" : "Switch to Random Color Mode";
 });
 
-// Change the grid size
+// Adjust grid size based on user input
 gridSizeButton.addEventListener("click", () => {
     let newSize;
     do {
         const userInput = prompt("Enter new grid size (e.g., 50 for 50x50):");
-        if (userInput === null) {
-            return; // Exit if the user cancels the prompt
-        }
+        if (userInput === null) return; 
         newSize = parseInt(userInput, 10);
     } while (isNaN(newSize) || newSize < 1 || newSize > 100);
 
@@ -64,17 +79,22 @@ gridSizeButton.addEventListener("click", () => {
     }
 });
 
-// Toggle drawing on and off with a click
-container.addEventListener("click", () => {
-    isDrawing = !isDrawing;
+// Enable or disable drawing mode
+gridContainer.addEventListener("click", () => {
+    isDrawingEnabled = !isDrawingEnabled;
 });
 
+// Toggle eraser mode
 eraserButton.addEventListener("click", () => {
-    isErasing = !isErasing;
-    eraserButton.textContent = isErasing ? "Switch to Drawing Mode" : "Switch to Eraser Mode";
+    isEraserEnabled = !isEraserEnabled;
+    eraserButton.textContent = isEraserEnabled ? "Switch to Drawing Mode" : "Switch to Eraser Mode";
 });
 
-// Initial grid creation
+// Toggle darkening mode
+darkenModeButton.addEventListener("click", () => {
+    isDarkenModeEnabled = !isDarkenModeEnabled;
+    darkenModeButton.textContent = isDarkenModeEnabled ? "Disable Darkening Mode" : "Enable Darkening Mode";
+});
+
+// Initialize grid with a default size of 16x16
 createGrid(16);
-
-
