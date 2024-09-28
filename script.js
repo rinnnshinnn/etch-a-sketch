@@ -10,6 +10,7 @@ let isRandomColorMode = false;
 let isDrawingEnabled = false; 
 let isEraserEnabled = false;
 let isDarkenModeEnabled = false; 
+let isMouseDown = false;
 
 function createGrid(size) {
     gridContainer.innerHTML = ""; // Clear any existing grid
@@ -26,8 +27,9 @@ function createGrid(size) {
         overlay.style.pointerEvents = "none"; // Make overlay non-interactive
         gridCell.appendChild(overlay);
 
+        /*
         gridCell.addEventListener("mouseover", (event) => {
-            if (isDrawingEnabled) {
+            if (isDrawingEnabled && isMouseDown) {
                 const overlay = event.target.firstChild;
                 if (isEraserEnabled) {
                     overlay.style.opacity = 0; // Clear darkening effect
@@ -42,8 +44,44 @@ function createGrid(size) {
                 }
             }
         });
+        */
+        gridCell.addEventListener("mousedown", (event) => {
+            event.preventDefault();
+            isMouseDown = true;
+            draw(event);
+        });
+
+        gridCell.addEventListener("mousemove", (event) => {
+            if (isMouseDown) {
+                draw(event);
+            }
+        });
+
+        gridCell.addEventListener("mouseup", () => {
+            isMouseDown = false;
+        });
+
+        
 
         gridContainer.appendChild(gridCell);
+    }
+}
+
+function draw(event) {
+    const gridCell = event.target;
+    const overlay = gridCell.firstChild;
+    if (isMouseDown) {
+        if (isEraserEnabled) {
+            overlay.style.opacity = 0; // Clear darkening effect
+            gridCell.style.backgroundColor = "#fdf5e6"; // Reset background color
+        } else if (isDarkenModeEnabled) {
+            let currentOpacity = parseFloat(overlay.style.opacity);
+            if (currentOpacity < 1) {
+                overlay.style.opacity = currentOpacity + 0.1; // Increment darkening effect
+            }
+        } else {
+            gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
+        }
     }
 }
 
@@ -79,9 +117,12 @@ gridSizeButton.addEventListener("click", () => {
     }
 });
 
-// Enable or disable drawing mode
-gridContainer.addEventListener("click", () => {
-    isDrawingEnabled = !isDrawingEnabled;
+
+gridContainer.addEventListener("mousedown", () => {
+    isMouseDown = true;
+});
+gridContainer.addEventListener("mouseup", () => {
+    isMouseDown = false;
 });
 
 // Toggle eraser mode
