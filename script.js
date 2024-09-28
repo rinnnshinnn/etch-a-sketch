@@ -7,7 +7,6 @@ const darkenModeButton = document.querySelector("#darkenMode");
 
 let penColor = 'black'; 
 let isRandomColorMode = false; 
-let isDrawingEnabled = false; 
 let isEraserEnabled = false;
 let isDarkenModeEnabled = false; 
 let isMouseDown = false;
@@ -27,41 +26,25 @@ function createGrid(size) {
         overlay.style.pointerEvents = "none"; // Make overlay non-interactive
         gridCell.appendChild(overlay);
 
-        /*
-        gridCell.addEventListener("mouseover", (event) => {
-            if (isDrawingEnabled && isMouseDown) {
-                const overlay = event.target.firstChild;
-                if (isEraserEnabled) {
-                    overlay.style.opacity = 0; // Clear darkening effect
-                    event.target.style.backgroundColor = "#fdf5e6"; // Reset background color
-                } else if (isDarkenModeEnabled) {
-                    let currentOpacity = parseFloat(overlay.style.opacity);
-                    if (currentOpacity < 1) {
-                        overlay.style.opacity = currentOpacity + 0.1; // Increment darkening effect
-                    }
-                } else {
-                    gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
-                }
-            }
-        });
-        */
         gridCell.addEventListener("mousedown", (event) => {
             event.preventDefault();
             isMouseDown = true;
             draw(event);
         });
 
-        gridCell.addEventListener("mousemove", (event) => {
+        gridCell.addEventListener("mouseenter", (event) => {
             if (isMouseDown) {
-                draw(event);
+                if (isDarkenModeEnabled) {
+                    darken(event);
+                } else {
+                    draw(event);
+                }
             }
         });
 
         gridCell.addEventListener("mouseup", () => {
             isMouseDown = false;
         });
-
-        
 
         gridContainer.appendChild(gridCell);
     }
@@ -70,18 +53,20 @@ function createGrid(size) {
 function draw(event) {
     const gridCell = event.target;
     const overlay = gridCell.firstChild;
-    if (isMouseDown) {
-        if (isEraserEnabled) {
-            overlay.style.opacity = 0; // Clear darkening effect
-            gridCell.style.backgroundColor = "#fdf5e6"; // Reset background color
-        } else if (isDarkenModeEnabled) {
-            let currentOpacity = parseFloat(overlay.style.opacity);
-            if (currentOpacity < 1) {
-                overlay.style.opacity = currentOpacity + 0.1; // Increment darkening effect
-            }
-        } else {
-            gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
-        }
+    if (isEraserEnabled) {
+        overlay.style.opacity = 0; // Clear darkening effect
+        gridCell.style.backgroundColor = "#fdf5e6"; // Reset background color
+    } else {
+        gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
+    }
+}
+
+function darken(event) {
+    const gridCell = event.target;
+    const overlay = gridCell.firstChild;
+    let currentOpacity = parseFloat(overlay.style.opacity);
+    if (currentOpacity < 1) {
+        overlay.style.opacity = currentOpacity + 0.1; // Increment darkening effect
     }
 }
 
@@ -105,24 +90,10 @@ toggleColorModeButton.addEventListener("click", () => {
 
 // Adjust grid size based on user input
 gridSizeButton.addEventListener("click", () => {
-    let newSize;
-    do {
-        const userInput = prompt("Enter new grid size (e.g., 50 for 50x50):");
-        if (userInput === null) return; 
-        newSize = parseInt(userInput, 10);
-    } while (isNaN(newSize) || newSize < 1 || newSize > 100);
-
-    if (newSize) {
+    const newSize = parseInt(prompt("Enter new grid size (e.g., 50 for 50x50):"), 10);
+    if (!isNaN(newSize) && newSize > 0 && newSize <= 100) {
         createGrid(newSize);
     }
-});
-
-
-gridContainer.addEventListener("mousedown", () => {
-    isMouseDown = true;
-});
-gridContainer.addEventListener("mouseup", () => {
-    isMouseDown = false;
 });
 
 // Toggle eraser mode
