@@ -46,6 +46,34 @@ function createGrid(size) {
             isMouseDown = false;
         });
 
+        // Add touch event listeners
+        gridCell.addEventListener("touchstart", (event) => {
+            event.preventDefault();
+            draw(event.touches[0]);
+        });
+
+        gridCell.addEventListener("touchmove", (event) => {
+            event.preventDefault();
+            const touch = event.touches[0];
+            const touchedCell = document.elementFromPoint(touch.clientX, touch.clientY);
+            if (touchedCell && touchedCell.parentNode === gridContainer) {
+                if (isDarkenModeEnabled) {
+                    darken({ target: touchedCell });
+                } else {
+                    draw({ target: touchedCell });
+                }
+            }
+        });
+
+        gridCell.addEventListener("touchend", () => {
+            isMouseDown = false;
+        });
+
+        // Disable right-click on grid cells
+        gridCell.addEventListener("contextmenu", (event) => {
+            event.preventDefault();
+        });
+
         gridContainer.appendChild(gridCell);
     }
 }
