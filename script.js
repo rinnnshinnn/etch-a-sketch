@@ -81,12 +81,16 @@ function createGrid(size) {
 function draw(event) {
     const gridCell = event.target;
     const overlay = gridCell.firstChild;
+
     if (isEraserEnabled) {
         overlay.style.opacity = 0; // Clear darkening effect
         gridCell.style.backgroundColor = "#fdf5e6"; // Reset background color
-    } else {
-        gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
-    }
+        return
+    } 
+    
+    overlay.style.opacity = 0; // Reset darkening effect
+    
+    gridCell.style.backgroundColor = isRandomColorMode ? getRandomColor() : penColor;
 }
 
 function darken(event) {
