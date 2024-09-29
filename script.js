@@ -34,7 +34,7 @@ function createGrid(size) {
 
         gridCell.addEventListener("mouseenter", (event) => {
             if (isMouseDown) {
-                if (isDarkenModeEnabled) {
+                if (isDarkenModeEnabled && !isEraserEnabled) {
                     darken(event);
                 } else {
                     draw(event);
