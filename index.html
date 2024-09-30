@@ -10,10 +10,22 @@
 <body>
     <div id="button-container">
         <button type="button" id="penColor">Change Pen Color</button>
-        <button type="button" id="toggleColorMode">Toggle Color Mode</button>
+        <label class="switch">
+            <input type="checkbox" id="toggleColorMode">
+            <span class="slider"></span>
+            <span class="label">Toggle Color Mode</span>
+        </label>
         <button type="button" id="gridSize">Change Grid Size</button>
-        <button type="button" id="darkenMode">Opacity</button>
-        <button type="button" id="eraser">Eraser</button>
+        <label class="switch">
+            <input type="checkbox" id="darkenMode">
+            <span class="slider"></span>
+            <span class="label">Opacity</span>
+        </label>
+        <label class="switch">
+            <input type="checkbox" id="eraser">
+            <span class="slider"></span>
+            <span class="label">Eraser</span>
+        </label>
     </div>
     <div id="container"></div>
 

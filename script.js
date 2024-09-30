@@ -1,9 +1,9 @@
 const gridContainer = document.querySelector("#container");
 const penColorButton = document.querySelector("#penColor");
-const toggleColorModeButton = document.querySelector("#toggleColorMode");
+const toggleColorModeCheckbox = document.querySelector("#toggleColorMode");
 const gridSizeButton = document.querySelector("#gridSize");
-const eraserButton = document.querySelector("#eraser");
-const darkenModeButton = document.querySelector("#darkenMode");
+const eraserCheckbox = document.querySelector("#eraser");
+const darkenModeCheckbox = document.querySelector("#darkenMode");
 
 let penColor = 'black'; 
 let isRandomColorMode = false; 
@@ -82,6 +82,10 @@ function draw(event) {
     const gridCell = event.target;
     const overlay = gridCell.firstChild;
 
+    if (isDarkenModeEnabled) {
+        return; // Exit the function if darken mode is enabled
+    }
+
     if (isEraserEnabled) {
         overlay.style.opacity = 0; // Clear darkening effect
         gridCell.style.backgroundColor = "#fdf5e6"; // Reset background color
@@ -115,9 +119,9 @@ penColorButton.addEventListener("click", () => {
 });
 
 // Toggle between random and single color modes
-toggleColorModeButton.addEventListener("click", () => {
-    isRandomColorMode = !isRandomColorMode;
-    toggleColorModeButton.textContent = isRandomColorMode ? "Switch to Single Color Mode" : "Switch to Random Color Mode";
+toggleColorModeCheckbox.addEventListener("change", () => {
+    isRandomColorMode = toggleColorModeCheckbox.checked;
+    isDarkenModeEnabled = darkenModeCheckbox.checked = false; // Disable darken mode
 });
 
 // Adjust grid size based on user input
@@ -129,15 +133,15 @@ gridSizeButton.addEventListener("click", () => {
 });
 
 // Toggle eraser mode
-eraserButton.addEventListener("click", () => {
-    isEraserEnabled = !isEraserEnabled;
-    eraserButton.textContent = isEraserEnabled ? "Switch to Drawing Mode" : "Switch to Eraser Mode";
+eraserCheckbox.addEventListener("change", () => {
+    isEraserEnabled = eraserCheckbox.checked;
 });
 
 // Toggle darkening mode
-darkenModeButton.addEventListener("click", () => {
-    isDarkenModeEnabled = !isDarkenModeEnabled;
-    darkenModeButton.textContent = isDarkenModeEnabled ? "Disable Darkening Mode" : "Enable Darkening Mode";
+darkenModeCheckbox.addEventListener("change", () => {
+    isDarkenModeEnabled = darkenModeCheckbox.checked;
+    isRandomColorMode = toggleColorModeCheckbox.checked = false; // Disable random color mode
+    
 });
 
 // Initialize grid with a default size of 16x16

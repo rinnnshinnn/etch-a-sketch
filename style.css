@@ -65,10 +65,60 @@ button:hover {
     z-index: 10;
 }
 
+.switch {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+}
+
+.switch .label {
+    margin-left: 10px;
+    font-family: 'UnifrakturCook', cursive; 
+    font-size: 20px;
+}
+
+.switch input {
+    display: none;
+}
+
+.switch .slider {
+    position: relative;
+    width: 50px;
+    height: 25px;
+    background-color: #ccc;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.switch .slider:before {
+    content: "";
+    position: absolute;
+    width: 21px;
+    height: 21px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+}
+
+.switch input:checked + .slider {
+    background-color: #8b4513;
+}
+
+.switch input:checked + .slider:before {
+    transform: translateX(25px);
+}
+
 @media (max-width: 768px) {
     button {
         font-size: 16px; 
         padding: 8px 16px;
+    }
+
+    .switch .label {
+        font-size: 16px;
     }
 
     #container {
@@ -86,6 +136,10 @@ button:hover {
     button {
         font-size: 14px;
         padding: 6px 12px;
+    }
+
+    .switch .label {
+        font-size: 14px;
     }
 
     #container {
